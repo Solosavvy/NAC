@@ -23,10 +23,17 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-    - name: Install Dependencies & Capacitor CLI
+    - name: Install Dependencies & Setup Android
       run: |
         npm install
-        npm install --save-dev @capacitor/cli @capacitor/core
+        npm install --save-dev @capacitor/cli @capacitor/core @capacitor/android
+        mkdir -p www
+        if [ ! -f www/index.html ]; then
+          echo "<!DOCTYPE html><html><head><title>App</title></head><body></body></html>" > www/index.html
+        fi
+        if [ ! -d "android" ]; then
+          npx cap add android
+        fi
         npx cap sync android
 
     - name: Build Debug APK
