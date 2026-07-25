@@ -32,6 +32,9 @@ jobs:
     - name: Add Android Platform
       run: npx cap add android
 
+    - name: Sync Capacitor Configuration
+      run: npx cap sync android
+
     - name: Build APK
       run: |
         cd android
