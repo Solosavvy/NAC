@@ -36,6 +36,13 @@ jobs:
         npx cap add android
         npx cap sync android
 
+    - name: Fix Gradle Build Config
+      run: |
+        cd android
+        # Disable strict jar caching transforms that trigger the crash
+        echo "org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8" >> gradle.properties
+        echo "android.defaults.buildfeatures.buildconfig=true" >> gradle.properties
+
     - name: Build Debug APK
       run: |
         cd android
