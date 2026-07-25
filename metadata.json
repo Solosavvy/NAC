@@ -1,0 +1,6 @@
+{
+  "name": "NAC Choir Stream - Android Native Wrapper Studio",
+  "description": "Production-ready Android native WebView wrapper project generator and preview studio for NAC Choir Stream with background audio service, media notifications, hardware acceleration, and offline caching.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
