@@ -45,7 +45,7 @@ jobs:
     - name: Build APK
       run: |
         cd android
-        ./gradlew clean assembleDebug
+        ./gradlew assembleDebug --no-daemon -Dorg.gradle.parallel=false
 
     - name: Upload APK File
       uses: actions/upload-artifact@v4
