@@ -29,6 +29,13 @@ jobs:
     - name: Install Capacitor Core, CLI, and Android Platform
       run: npm install @capacitor/cli @capacitor/core @capacitor/android
 
+    - name: Ensure Web Assets Directory Exists
+      run: |
+        mkdir -p www
+        if [ ! -f www/index.html ]; then
+          echo "<!DOCTYPE html><html><head><title>App</title></head><body></body></html>" > www/index.html
+        fi
+
     - name: Add Android Platform
       run: npx cap add android
 
