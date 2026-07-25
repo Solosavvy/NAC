@@ -23,9 +23,10 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-    - name: Install Dependencies & Sync
+    - name: Install Dependencies & Capacitor CLI
       run: |
         npm install
+        npm install --save-dev @capacitor/cli @capacitor/core
         npx cap sync android
 
     - name: Build Debug APK
