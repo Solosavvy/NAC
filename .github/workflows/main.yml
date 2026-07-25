@@ -26,8 +26,8 @@ jobs:
     - name: Install Project Dependencies
       run: npm install
 
-    - name: Install Capacitor CLI and Core
-      run: npm install @capacitor/cli @capacitor/core
+    - name: Install Capacitor Core, CLI, and Android Platform
+      run: npm install @capacitor/cli @capacitor/core @capacitor/android
 
     - name: Add Android Platform
       run: npx cap add android
