@@ -1,0 +1,45 @@
+export async function start(url: string, title = 'NAC', text = 'Playing') {
+  // Capacitor v5 plugin access pattern may vary; this is a generic call
+  // If using Capacitor 5, replace with generated plugin import
+  try {
+    // @ts-ignore
+    const { NacAudio } = (window as any).Capacitor?.Plugins || (await import('@capacitor/core')).Plugins
+    return await NacAudio.start({ url, title, text })
+  } catch (e) {
+    console.error('NacAudio.start error', e)
+    throw e
+  }
+}
+
+export async function stop() {
+  try {
+    // @ts-ignore
+    const { NacAudio } = (window as any).Capacitor?.Plugins || (await import('@capacitor/core')).Plugins
+    return await NacAudio.stop()
+  } catch (e) {
+    console.error('NacAudio.stop error', e)
+    throw e
+  }
+}
+
+export async function play() {
+  try {
+    // @ts-ignore
+    const { NacAudio } = (window as any).Capacitor?.Plugins || (await import('@capacitor/core')).Plugins
+    return await NacAudio.play()
+  } catch (e) {
+    console.error('NacAudio.play error', e)
+    throw e
+  }
+}
+
+export async function pause() {
+  try {
+    // @ts-ignore
+    const { NacAudio } = (window as any).Capacitor?.Plugins || (await import('@capacitor/core')).Plugins
+    return await NacAudio.pause()
+  } catch (e) {
+    console.error('NacAudio.pause error', e)
+    throw e
+  }
+}

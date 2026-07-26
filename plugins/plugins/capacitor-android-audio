@@ -1,0 +1,66 @@
+package com.nac.choir
+
+import android.content.Intent
+import com.getcapacitor.JSObject
+import com.getcapacitor.Plugin
+import com.getcapacitor.PluginCall
+import com.getcapacitor.annotation.CapacitorPlugin
+import com.getcapacitor.annotation.PluginMethod
+import com.nac.choir.audio.AudioPlaybackService
+
+@CapacitorPlugin(name = "NacAudio")
+class CapacitorAudioPlugin : Plugin() {
+
+    @PluginMethod
+    fun start(call: PluginCall) {
+        val url = call.getString("url")
+        if (url == null) {
+            call.reject("url required")
+            return
+        }
+        val title = call.getString("title") ?: "NAC"
+        val intent = Intent(context, AudioPlaybackService::class.java).apply {
+            action = AudioPlaybackService.ACTION_START
+            putExtra(AudioPlaybackService.EXTRA_URL, url)
+        }
+        // Start as foreground service
+        try {
+            context.startForegroundService(intent)
+        } catch (e: Exception) {
+            context.startService(intent)
+        }
+        val ret = JSObject()
+        ret.put("status", "started")
+        ret.put("title", title)
+        call.resolve(ret)
+    }
+
+    @PluginMethod
+    fun stop(call: PluginCall) {
+        val intent = Intent(context, AudioPlaybackService::class.java).apply {
+            action = AudioPlaybackService.ACTION_STOP
+        }
+        context.startService(intent)
+        val ret = JSObject()
+        ret.put("status", "stopped")
+        call.resolve(ret)
+    }
+
+    @PluginMethod
+    fun play(call: PluginCall) {
+        val intent = Intent(context, AudioPlaybackService::class.java).apply {
+            action = AudioPlaybackService.ACTION_PLAY
+        }
+        context.startService(intent)
+        call.resolve(JSObject().apply { put("status","playing") })
+    }
+
+    @PluginMethod
+    fun pause(call: PluginCall) {
+        val intent = Intent(context, AudioPlaybackService::class.java).apply {
+            action = AudioPlaybackService.ACTION_PAUSE
+        }
+        context.startService(intent)
+        call.resolve(JSObject().apply { put("status","paused") })
+    }
+}

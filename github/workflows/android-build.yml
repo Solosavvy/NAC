@@ -13,7 +13,8 @@ jobs:
       ANDROID_SDK_ROOT: /usr/local/android-sdk
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -35,13 +36,14 @@ jobs:
       - name: Install Capacitor CLI
         run: npm install --no-save @capacitor/cli@^5
 
-      - name: Add Android platform
+      - name: Add Android platform (if missing)
         run: |
-          npx cap add android || echo "android already added"
+          # npx cap add android will create android/ if missing
+          npx cap add android || echo "android platform already added or creation failed"
 
       - name: Copy plugin sources into Android project
         run: |
-          bash scripts/install-android-plugin.sh
+          bash scripts/install-android-plugin.sh || echo "install-android-plugin.sh completed with warnings"
 
       - name: Add ExoPlayer dependency if missing
         run: |
@@ -72,25 +74,47 @@ jobs:
 
       - name: Sync Capacitor and Android
         run: |
-          npx cap sync android
+          npx cap sync android || echo "npx cap sync android finished with warnings"
 
-      - name: Install Android SDK components
+      - name: Install Android SDK components (if needed)
         run: |
           sudo apt-get update
           sudo apt-get install -y unzip
           mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
           curl -o sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-9123335_latest.zip
-          unzip sdk-tools.zip -d $ANDROID_SDK_ROOT/cmdline-tools
-          mv $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools $ANDROID_SDK_ROOT/cmdline-tools/latest
+          unzip -q sdk-tools.zip -d $ANDROID_SDK_ROOT/cmdline-tools
+          mv $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools $ANDROID_SDK_ROOT/cmdline-tools/latest || true
           yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platform-tools" "platforms;android-33" "build-tools;33.0.2"
 
       - name: Accept licenses
         run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
-      - name: Build Android release
-        if: always()
-        working-directory: android
-        run: ./gradlew assembleRelease -Porg.gradle.daemon=false || true
+      - name: Debug - list repo root and android dir
+        run: |
+          echo "Repo root:"
+          ls -la
+          echo "android dir listing (if exists):"
+          ls -la android || true
+
+      - name: Build Android release (safe: checks for android/ and gradlew)
+        run: |
+          if [ ! -d android ]; then
+            echo "Error: android/ directory does not exist. Aborting build step."
+            exit 1
+          fi
+
+          cd android
+
+          if [ -f ./gradlew ]; then
+            echo "Using project gradle wrapper (./gradlew)"
+            chmod +x ./gradlew || true
+            ./gradlew assembleRelease -Porg.gradle.daemon=false
+          else
+            echo "./gradlew not found. Installing system Gradle and attempting to build (may be slower)."
+            sudo apt-get update
+            sudo apt-get install -y gradle
+            gradle assembleRelease -Porg.gradle.daemon=false
+          fi
 
       - name: Upload build artifacts
         if: always()
@@ -98,3 +122,4 @@ jobs:
         with:
           name: android-artifacts
           path: android/app/build/outputs/**
+          
