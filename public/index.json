@@ -1,0 +1,22 @@
+{
+  "songs": [
+    {
+      "id": "hymn-001",
+      "number": 1,
+      "title": "Great Is Thy Faithfulness",
+      "artist": "NAC Choir",
+      "duration": 185,
+      "url": "https://www.example.com/audio/great-is-thy-faithfulness.mp3",
+      "section": "Sunday Service"
+    },
+    {
+      "id": "hymn-002",
+      "number": 2,
+      "title": "Amazing Grace",
+      "artist": "NAC Choir",
+      "duration": 210,
+      "url": "https://www.example.com/audio/amazing-grace.mp3",
+      "section": "Hymn Book"
+    }
+  ]
+}
